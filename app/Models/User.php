@@ -3,7 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Traits\HasKey;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -13,6 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens;
+    use HasKey;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -29,7 +33,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'key',
     ];
+
+    public function getRouteKeyName() { return "key"; }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -63,5 +70,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function requests(): BelongsToMany {
+        return $this->belongsToMany(UserRequest::class);
+    }
+
+    public function respondedRequests(): BelongsToMany {
+        return $this->belongsToMany(UserRequest::class, "request_volunteer", "volunteer_id", "request_id");
     }
 }

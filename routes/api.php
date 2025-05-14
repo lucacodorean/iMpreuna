@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,4 +22,14 @@ Route::prefix('requests')->as("request.")->group(function () {
     Route::post("/{userRequest}/join",  [RequestController::class, 'join'])->name('join');
     Route::patch("/{userRequest}",      [RequestController::class, 'update'])->name('update');
     Route::delete("/{userRequest}",     [RequestController::class, 'delete'])->name('delete');
+});
+
+
+Route::prefix("organizations")->as("organization.")->group(function () {
+    Route::get("/",                         [OrganizationController::class, "index"])->name("index");
+    Route::get("/{organization}",           [OrganizationController::class, "show"])->name("show");
+    Route::post("/{organization}/hire",     [OrganizationController::class, "hire"])->name("hire");
+    Route::post("/",                        [OrganizationController::class, "store"])->name("store");
+    Route::patch("/{organization}",         [OrganizationController::class, "update"])->name("update");
+    Route::delete("/{organization}",        [OrganizationController::class, "delete"])->name("delete");
 });

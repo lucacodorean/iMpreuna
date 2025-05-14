@@ -16,7 +16,7 @@ class RequestStoreRequest extends FormRequest {
         return [
             "description" => ["required", "string"],
             "tags"        => ["nullable", "array"],
-            "tags.*"      => ["nullable", "exists:tags,id"],
+            "tags.*"      => ["nullable", "exists:tags,key"],
         ];
     }
 }

@@ -79,4 +79,14 @@ class User extends Authenticatable
     public function respondedRequests(): BelongsToMany {
         return $this->belongsToMany(UserRequest::class, "request_volunteer", "volunteer_id", "request_id");
     }
+
+    public function organizations(): BelongsToMany {
+        return $this->belongsToMany(Organization::class)->withPivot("role_id");
+    }
+
+    public function getRoleInOrganization($organizationId) {
+        $organization = $this->organizations()->where('organization_id', $organizationId)->first();
+        return $organization ? Role::find($organization->pivot->role_id) : null;
+    }
+
 }

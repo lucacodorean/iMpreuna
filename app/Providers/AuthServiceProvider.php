@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Organization;
 use App\Models\User;
 use App\Models\UserRequest;
 use App\Policies\UserRequestPolicy;
@@ -31,9 +32,22 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define("joinRequest", function (User $user, UserRequest $userRequest) {
-            // TBE: When organization will be implemented, make sure that the user's organization
-            // has at least one tag in common with the request.
-            return $userRequest->user() !== $user;
+            $orgTagIds = $user->organizations()
+                ->with('tags:id')->get()
+                ->pluck('tags')->flatten()
+                ->pluck('id')->unique()
+                ->toArray();
+
+            $requestTagIds = $userRequest->tags->pluck('id')->toArray();
+            return $userRequest->user() !== $user && count(array_intersect($orgTagIds, $requestTagIds)) > 0;
+        });
+
+        Gate::define("isAdmin", function (User $user) {
+           return $user->is_admin;
+        });
+
+        Gate::define("modifyOrganization", function (User $user, Organization $organization) {
+            return $user->is_admin || $user->getRoleInOrganization($organization->id)->name == "Administrator";
         });
     }
 }

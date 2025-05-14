@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RequestStoreRequest;
 use App\Http\Requests\RequestUpdateRequest;
 use App\Http\Resources\UserRequestResource;
+use App\Models\Tag;
 use App\Models\UserRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Arr;
@@ -38,7 +39,7 @@ class RequestController extends Controller {
         ));
 
         if($request->has("tags"))
-            $userRequest->tags()->attach($request->tags);
+            $userRequest->tags()->attach(collect($request->tags)->map(fn($tag) => Tag::where("key", $tag)->first()->id)->toArray());
 
         return new UserRequestResource($userRequest->load(["tags", "user", "volunteers"]));
     }
@@ -47,7 +48,7 @@ class RequestController extends Controller {
         if(Gate::forUser(Auth::guard("sanctum")->user())->allows("updateRequest", $userRequest)) {
             $userRequest->update(Arr::except($httpRequest->validated(), ['tags']));
             if($httpRequest->has("tags")) {
-                $userRequest->tags()->sync($httpRequest->tags);
+                $userRequest->tags()->sync(collect($httpRequest->tags)->map(fn($tag) => Tag::where("key", $tag)->first()->id)->toArray());
             }
         } else if(Gate::forUser(Auth::guard("sanctum")->user())->allows("volunteerRequest", $userRequest) && $httpRequest->has("status")) {
             $userRequest->status = $httpRequest->status;
@@ -60,6 +61,7 @@ class RequestController extends Controller {
     public function join(UserRequest $userRequest) {
         if(Gate::forUser(Auth::guard("sanctum")->user())->allows("joinRequest", $userRequest))
             $userRequest->volunteers()->attach(Auth::guard("sanctum")->user());
+        else abort(403, "Unable to join this request.");
         return new UserRequestResource($userRequest->load(["tags", "user", "volunteers"]));
     }
 

@@ -20,8 +20,8 @@ class OrganizationController extends Controller
 {
     public function index() {
         $organizations = QueryBuilder::for(Organization::class)
-            ->allowedIncludes(["tags", "users"])
-            ->allowedFilters(["tags"])
+            ->allowedIncludes(["tags", "users", "events"])
+            ->allowedFilters(["tags", "users", "events"])
             ->allowedSorts("name")
             ->get();
 
@@ -29,7 +29,7 @@ class OrganizationController extends Controller
     }
 
     public function show(Organization $organization) {
-        return new UserRequestResource($organization->load(["tags", "users"]));
+        return new UserRequestResource($organization->load(["tags", "users", "events"]));
     }
 
     public function store(OrganizationStoreRequest $request) {

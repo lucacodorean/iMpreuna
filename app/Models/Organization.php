@@ -21,4 +21,7 @@ class Organization extends Model
         return $this->belongsToMany(Tag::class);
     }
 
+    public function events() : BelongsToMany {
+        return $this->belongsToMany(Event::class);
+    }
 }

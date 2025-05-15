@@ -27,6 +27,7 @@ class OrganizationResource extends JsonResource
             "relationships" => [
                 "users" => UserResource::collection($this->whenLoaded("users")),
                 "tags"  => TagResource::collection($this->whenLoaded("tags")),
+                "events"  => EventResource::collection($this->whenLoaded("events")),
             ],
 
             "links" => [

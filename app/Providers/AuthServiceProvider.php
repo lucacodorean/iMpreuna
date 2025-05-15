@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Event;
 use App\Models\Organization;
 use App\Models\User;
 use App\Models\UserRequest;
@@ -49,6 +50,16 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define("modifyOrganization", function (User $user, Organization $organization) {
             return $user->is_admin || $user->getRoleInOrganization($organization->id)->name == "Administrator";
         });
+
+        Gate::define("modifyEvent", function (User $user, Event $event) {
+
+            $event->organizations()->each(function ($organization) use ($user) {
+                if($user->getRoleInOrganization($organization->id)->name == "Administrator") return true;
+            });
+
+            return $user->is_admin;
+        });
+
     }
 }
 

@@ -17,7 +17,7 @@ class RequestController extends Controller {
     public function index() {
         $requests = QueryBuilder::for(UserRequest::class)
             ->allowedFilters(["tags", "status"])
-            ->allowedIncludes(["tags", "requester", "volunteers"])
+            ->allowedIncludes(["tags", "user", "volunteers"])
             ->defaultSorts("-created_at", "-status")
             ->allowedSorts('created_at', 'updated_at')
             ->get();

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RequestController;
 use Illuminate\Http\Request;
@@ -32,4 +33,12 @@ Route::prefix("organizations")->as("organization.")->group(function () {
     Route::post("/",                        [OrganizationController::class, "store"])->name("store");
     Route::patch("/{organization}",         [OrganizationController::class, "update"])->name("update");
     Route::delete("/{organization}",        [OrganizationController::class, "delete"])->name("delete");
+});
+
+Route::prefix("events")->as("event.")->group(function () {
+    Route::get("/",             [EventController::class, "index"])->name("index");
+    Route::get("/{event}",      [EventController::class, "show"])->name("show");
+    Route::post("/",            [EventController::class, "store"])->name("store");
+    Route::patch("/{event}",    [EventController::class, "update"])->name("update");
+    Route::delete("/{event}",   [EventController::class, "delete"])->name("delete");
 });
